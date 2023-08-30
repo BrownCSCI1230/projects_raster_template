@@ -4,6 +4,8 @@
 #include <QFileDialog>
 #include <iostream>
 #include "settings.h"
+#include <algorithm>
+#include <cmath>
 
 /**
  * @brief Initializes new 500x500 canvas
@@ -77,7 +79,49 @@ void Canvas2D::resize(int w, int h) {
  * @brief Called when the filter button is pressed in the UI
  */
 void Canvas2D::filterImage() {
-    // Filter TODO: apply the currently selected filter to the loaded image
+
+    // EXAMPLE 1: per-pixel debugging
+    for (int i = 0; i < m_data.size(); i++) {
+//        if (i == 481*m_height + 257) {
+            auto& pix = m_data[i];
+//            pix.r *= 1.1;
+//            pix.g *= 1.1;
+//            pix.b *= 1.1;
+            pix.r = std::min(255.0, pix.r*1.1);
+            pix.g = std::min(255.0, pix.g*1.1);
+            pix.b = std::min(255.0, pix.b*1.1);
+//        }
+    }
+
+//    QByteArray* img = new QByteArray(reinterpret_cast<const char*>(m_data.data()), 4*m_data.size());
+//    QImage out = QImage((const uchar*)img->data(), m_width, m_height, QImage::Format_RGBX8888);
+//    out.save("/Users/dritchie/testoutput.png");
+
+
+
+
+//    // EXAMPLE 2: Visualizing intermediates (e.g. 'visual printf')
+
+//    int x_mid = m_width / 2;
+//    int y_mid = m_height / 2;
+//    float max_dist = std::max(m_width, m_height);
+//    int stripe_width = 20;
+
+//    for (int i = 0 ; i < m_data.size(); i++) {
+//        int y = i / m_height;
+//        int x = i % m_height;
+//        auto dist = (int)(std::sqrt((x-x_mid)*(x-x_mid) + (y-y_mid)*(y-y_mid)));
+////        auto dist = (x-x_mid) + (y-y_mid);
+//        auto& pix = m_data[i];
+////        pix.r = 255 * (dist / max_dist);
+////        pix.g = 255 * (dist / max_dist);
+////        pix.b = 255 * (dist / max_dist);
+//        pix.r = ((dist / stripe_width) % 2) == 0 ? 255: 0;
+//        pix.g = ((dist / stripe_width) % 2) == 0 ? 255: 0;
+//        pix.b = ((dist / stripe_width) % 2) == 0 ? 255: 0;
+//    }
+
+    displayImage();
 }
 
 /**
