@@ -12,6 +12,13 @@ public:
     int m_width = 0;
     int m_height = 0;
 
+    // Brush-related functionality
+    std::vector<float> mask;
+
+    void initializeMask();
+    void updateMask();
+    void applyMask(int r, int c);
+
     void init();
     void clearCanvas();
     bool loadImageFromFile(const QString &file);
@@ -26,7 +33,13 @@ public:
     void filterImage();
 
 private:
+
+    // brushing
+    void brush();
+    void createConstantMask();
+
     std::vector<RGBA> m_data;
+    std::vector<RGBA> m_mask;
 
     void mouseDown(int x, int y);
     void mouseDragged(int x, int y);

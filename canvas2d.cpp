@@ -13,6 +13,10 @@ void Canvas2D::init() {
     m_width = 500;
     m_height = 500;
     clearCanvas();
+
+    initializeMask();
+    updateMask();
+
 }
 
 /**
@@ -74,10 +78,9 @@ bool Canvas2D::saveImageToFile(const QString &file) {
  */
 void Canvas2D::displayImage() {
     QByteArray img(reinterpret_cast<const char *>(m_data.data()), 4 * m_data.size());
-    QImage now = QImage((const uchar*)img->data(), m_width, m_height, QImage::Format_RGBX8888);
+    QImage now = QImage((const uchar*)img.data(), m_width, m_height, QImage::Format_RGBX8888);
     setPixmap(QPixmap::fromImage(now));
     setFixedSize(m_width, m_height);
-    update();
 }
 
 /**
@@ -106,6 +109,8 @@ void Canvas2D::settingsChanged() {
     // this saves your UI settings locally to load next time you run the program
     settings.saveSettings();
 
+    updateMask();
+
     // TODO: fill in what you need to do when brush or filter parameters change
 }
 
@@ -114,6 +119,7 @@ void Canvas2D::settingsChanged() {
  */
 void Canvas2D::mouseDown(int x, int y) {
     // Brush TODO
+    applyMask(y, x);
 }
 
 void Canvas2D::mouseDragged(int x, int y) {
