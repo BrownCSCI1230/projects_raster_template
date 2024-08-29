@@ -6,6 +6,15 @@
 #include "settings.h"
 
 /**
+ * Next Steps
+ *
+ * Implement linear and quadratic
+ * blend color with prev color on canvas
+ * Smudge brush
+ * Clean up
+ * /
+
+/**
  * @brief Initializes new 500x500 canvas
  */
 void Canvas2D::init() {
