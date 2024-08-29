@@ -120,12 +120,17 @@ void Canvas2D::settingsChanged() {
 void Canvas2D::mouseDown(int x, int y) {
     // Brush TODO
     applyMask(y, x);
+    isBrushing = true;
 }
 
 void Canvas2D::mouseDragged(int x, int y) {
     // Brush TODO
+    if (isBrushing) {
+        applyMask(y, x);
+    }
 }
 
 void Canvas2D::mouseUp(int x, int y) {
     // Brush TODO
+    isBrushing = false;
 }

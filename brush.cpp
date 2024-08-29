@@ -49,11 +49,15 @@ void Canvas2D::applyMask(int r, int c) {
             if (currCol >= 0 && currCol < m_width && currRow >= 0 && currRow < m_height) {
                 int currIndex = coordsToIndex(currCol, currRow, m_width);
 
-                std::cout<<mask[maskIndex]<<std::endl;
+                RGBA color = settings.brushColor;
 
-                m_data[currIndex].r = 0.f * mask[maskIndex];
-                m_data[currIndex].g = 0.f * mask[maskIndex];
-                m_data[currIndex].b = 255.f * mask[maskIndex];
+                m_data[currIndex].r= (1 - mask[maskIndex]) * m_data[currIndex].r + mask[maskIndex] * color.r;
+                m_data[currIndex].g = (1 - mask[maskIndex]) * m_data[currIndex].g + mask[maskIndex] * color.g;
+                m_data[currIndex].b = (1 - mask[maskIndex]) * m_data[currIndex].b + mask[maskIndex] * color.b;
+
+//                m_data[currIndex].r = 0.f * mask[maskIndex];
+//                m_data[currIndex].g = 0.f * mask[maskIndex];
+//                m_data[currIndex].b = 255.f * mask[maskIndex];
             }
         }
     }

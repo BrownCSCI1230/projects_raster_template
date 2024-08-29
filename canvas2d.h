@@ -35,6 +35,8 @@ public:
 private:
 
     // brushing
+
+    bool isBrushing = false;
     void brush();
     void createConstantMask();
 
