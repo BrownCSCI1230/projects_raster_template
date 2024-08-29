@@ -38,10 +38,11 @@ void Canvas2D::initializeMask() {
 }
 
 void Canvas2D::applyMask(int r, int c) {
-    for (int i = 0; i < 2 * settings.brushRadius + 1; i++) {
-        for (int j = 0; j < 2 * settings.brushRadius + 1; j++) {
+    int length = 2 * settings.brushRadius + 1;
+    for (int i = 0; i < length; i++) {
+        for (int j = 0; j < length; j++) {
 
-            int maskIndex = i * 2 * settings.brushRadius + 1 + j;
+            int maskIndex = i * length + j;
             int currRow = r + i - settings.brushRadius;
             int currCol = c + j - settings.brushRadius;
 
