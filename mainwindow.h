@@ -45,5 +45,6 @@ private slots:
     void onFilterButtonClick();
     void onRevertButtonClick();
     void onUploadButtonClick();
+    void onSaveButtonClick();
 };
 #endif // MAINWINDOW_H

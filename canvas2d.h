@@ -15,6 +15,7 @@ public:
     void init();
     void clearCanvas();
     bool loadImageFromFile(const QString &file);
+    bool saveImageToFile(const QString &file);
     void displayImage();
     void resize(int w, int h);
 

@@ -64,9 +64,9 @@ struct Settings {
     int medianRadius;               // Median radius (extra credit)
     float rotationAngle;            // Rotation angle (extra credit)
     int bilateralRadius;            // Bilateral radius (extra credit)
-    float lambda_1;                 // Chromatic aberration labmda 1 (extra credit)
-    float lambda_2;                 // Chromatic aberration labmda 2 (extra credit)
-    float lambda_3;                 // Chromatic aberration labmda 3 (extra credit)
+    int rShift;                     // Chromatic aberration red channel shift (extra credit)
+    int gShift;                     // Chromatic aberration green channel shift (extra credit)
+    int bShift;                     // Chromatic aberration blue channel shift (extra credit)
     bool nonLinearMap;              // Use non-linear mapping function for tone mapping (extra credit)
     float gamma;                    // Gamma for tone mapping (extra credit)
 

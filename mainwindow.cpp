@@ -73,7 +73,7 @@ MainWindow::MainWindow()
     // extra credit brushes
     addHeading(brushLayout, "Extra Credit Brushes");
     addRadioButton(brushLayout, "Spray", settings.brushType == BRUSH_SPRAY, [this]{ setBrushType(BRUSH_SPRAY); });
-    addSpinBox(brushLayout, "density", 1, 100, 1, settings.brushDensity, [this](int value){ setIntVal(settings.brushDensity, value); });
+    addSpinBox(brushLayout, "density", 0, 100, 1, settings.brushDensity, [this](int value){ setIntVal(settings.brushDensity, value); });
     addRadioButton(brushLayout, "Speed", settings.brushType == BRUSH_SPEED, [this]{ setBrushType(BRUSH_SPEED); });
     addRadioButton(brushLayout, "Fill", settings.brushType == BRUSH_FILL, [this]{ setBrushType(BRUSH_FILL); });
     addRadioButton(brushLayout, "Custom", settings.brushType == BRUSH_CUSTOM, [this]{ setBrushType(BRUSH_CUSTOM); });
@@ -81,6 +81,9 @@ MainWindow::MainWindow()
 
     // clearing canvas
     addPushButton(brushLayout, "Clear canvas", &MainWindow::onClearButtonClick);
+
+    // save canvas as image
+    addPushButton(brushLayout, "Save Image", &MainWindow::onSaveButtonClick);
 
     // filters
     addHeading(filterLayout, "Filter");
@@ -100,9 +103,9 @@ MainWindow::MainWindow()
     addSpinBox(filterLayout, "radius", 1, 100, 1, settings.medianRadius, [this](int value){ setIntVal(settings.medianRadius, value); });
 
     addRadioButton(filterLayout, "Chromatic aberration", settings.filterType == FILTER_CHROMATIC,  [this]{ setFilterType(FILTER_CHROMATIC); });
-    addDoubleSpinBox(filterLayout, "lambda 1", 1e-7, 1e-5, 1e-7, settings.lambda_1, 8, [this](float value){ setFloatVal(settings.lambda_1, value); });
-    addDoubleSpinBox(filterLayout, "lambda 2", 1e-7, 1e-5, 1e-7, settings.lambda_2, 8, [this](float value){ setFloatVal(settings.lambda_2, value); });
-    addDoubleSpinBox(filterLayout, "lambda 3", 1e-7, 1e-5, 1e-7, settings.lambda_3, 8, [this](float value){ setFloatVal(settings.lambda_3, value); });
+    addSpinBox(filterLayout, "red shift", -100, 100, 0, settings.rShift, [this](int value){ setIntVal(settings.rShift, value); });
+    addSpinBox(filterLayout, "green shift", -100, 100, 0, settings.gShift, [this](int value){ setIntVal(settings.gShift, value); });
+    addSpinBox(filterLayout, "blue shift", -100, 100, 0, settings.bShift, [this](int value){ setIntVal(settings.bShift, value); });
 
     addRadioButton(filterLayout, "Tone mapping", settings.filterType == FILTER_MAPPING,  [this]{ setFilterType(FILTER_MAPPING); });
     addCheckBox(filterLayout, "Non linear function", settings.nonLinearMap, [this](bool value){ setBoolVal(settings.nonLinearMap, value); });
@@ -118,6 +121,7 @@ MainWindow::MainWindow()
     addPushButton(filterLayout, "Load Image", &MainWindow::onUploadButtonClick);
     addPushButton(filterLayout, "Apply Filter", &MainWindow::onFilterButtonClick);
     addPushButton(filterLayout, "Revert Image", &MainWindow::onRevertButtonClick);
+    addPushButton(filterLayout, "Save Image", &MainWindow::onSaveButtonClick);
 }
 
 /**
@@ -258,4 +262,13 @@ void MainWindow::onUploadButtonClick() {
     m_canvas->loadImageFromFile(settings.imagePath);
 
     m_canvas->settingsChanged();
+}
+
+void MainWindow::onSaveButtonClick() {
+    // Get new image path selected by user
+    QString file = QFileDialog::getSaveFileName(this, tr("Save Image"), QDir::currentPath(), tr("Image Files (*.png *.jpg *.jpeg)"));
+    if (file.isEmpty()) { return; }
+
+    // Save image
+    m_canvas->saveImageToFile(file);
 }
