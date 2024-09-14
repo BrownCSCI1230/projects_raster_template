@@ -103,9 +103,9 @@ MainWindow::MainWindow()
     addSpinBox(filterLayout, "radius", 1, 100, 1, settings.medianRadius, [this](int value){ setIntVal(settings.medianRadius, value); });
 
     addRadioButton(filterLayout, "Chromatic aberration", settings.filterType == FILTER_CHROMATIC,  [this]{ setFilterType(FILTER_CHROMATIC); });
-    addSpinBox(filterLayout, "red shift", -100, 100, 0, settings.rShift, [this](int value){ setIntVal(settings.rShift, value); });
-    addSpinBox(filterLayout, "green shift", -100, 100, 0, settings.gShift, [this](int value){ setIntVal(settings.gShift, value); });
-    addSpinBox(filterLayout, "blue shift", -100, 100, 0, settings.bShift, [this](int value){ setIntVal(settings.bShift, value); });
+    addSpinBox(filterLayout, "red shift", -100, 100, 1, settings.rShift, [this](int value){ setIntVal(settings.rShift, value); });
+    addSpinBox(filterLayout, "green shift", -100, 100, 1, settings.gShift, [this](int value){ setIntVal(settings.gShift, value); });
+    addSpinBox(filterLayout, "blue shift", -100, 100, 1, settings.bShift, [this](int value){ setIntVal(settings.bShift, value); });
 
     addRadioButton(filterLayout, "Tone mapping", settings.filterType == FILTER_MAPPING,  [this]{ setFilterType(FILTER_MAPPING); });
     addCheckBox(filterLayout, "Non linear function", settings.nonLinearMap, [this](bool value){ setBoolVal(settings.nonLinearMap, value); });
