@@ -17,37 +17,71 @@
 
 Settings settings;
 
+// Constant key expressions for querying QSettings
+namespace QSettingsKeys {
+    namespace Brush {
+        constexpr QAnyStringView
+            BRUSH_TYPE         = "brushType",
+            BRUSH_RADIUS       = "brushRadius",
+            BRUSH_RED          = "brushRed",
+            BRUSH_GREEN        = "brushGreen",
+            BRUSH_BLUE         = "brushBlue",
+            BRUSH_ALPHA        = "brushAlpha",
+            BRUSH_DENSITY      = "brushDensity",
+            FIX_ALPHA_BLENDING = "fixAlphaBlending";
+    }
+    namespace Filter {
+        constexpr QAnyStringView
+            FILTER_TYPE             = "filterType",
+            EDGE_DETECT_SENSITIVITY = "edgeDetectSensitivity",
+            BLUR_RADIUS             = "blurRadius",
+            SCALE_X                 = "scaleX",
+            SCALE_Y                 = "scaleY",
+            MEDIAN_RADIUS           = "medianRadius",
+            ROTATION_ANGLE          = "rotationAngle",
+            BILATERAL_RADIUS        = "bilateralRadius",
+            R_SHIFT                 = "rShift",
+            G_SHIFT                 = "gShift",
+            B_SHIFT                 = "bShift",
+            NON_LINEAR_MAP          = "nonLinearMap",
+            GAMMA                   = "gamma",
+            IMAGE_PATH              = "imagePath";
+    }
+}
+
 /**
  * @brief Loads the application settings
  */
 void Settings::loadSettingsOrDefaults() {
-    // Load image settings
+    using namespace QSettingsKeys;
+
     QSettings s("CS123", "CS123");
 
-    brushType = s.value("brushType", BRUSH_LINEAR).toInt();
-    brushRadius = s.value("brushRadius", 10).toInt();
-    brushColor.r = s.value("brushRed", 0).toInt();
-    brushColor.g = s.value("brushGreen", 0).toInt();
-    brushColor.b = s.value("brushBlue", 0).toInt();
-    brushColor.a = s.value("brushAlpha", 255).toInt();
-    brushDensity = s.value("brushDensity", 5).toInt();
-    fixAlphaBlending = s.value("fixAlphaBlending", false).toBool();
+    // Load settings for Brush
+    brushType             = s.value(Brush::BRUSH_TYPE, BRUSH_LINEAR).toInt();
+    brushRadius           = s.value(Brush::BRUSH_RADIUS, 10).toInt();
+    brushColor.r          = s.value(Brush::BRUSH_RED, 0).toInt();
+    brushColor.g          = s.value(Brush::BRUSH_GREEN, 0).toInt();
+    brushColor.b          = s.value(Brush::BRUSH_BLUE, 0).toInt();
+    brushColor.a          = s.value(Brush::BRUSH_ALPHA, 255).toInt();
+    brushDensity          = s.value(Brush::BRUSH_DENSITY, 5).toInt();
+    fixAlphaBlending      = s.value(Brush::FIX_ALPHA_BLENDING, false).toBool();
 
-    filterType = s.value("filterType", FILTER_EDGE_DETECT).toInt();
-    edgeDetectSensitivity = s.value("edgeDetectSensitivity", 0.5f).toDouble();
-    blurRadius = s.value("blurRadius", 10).toInt();
-    scaleX = s.value("scaleX", 2).toDouble();
-    scaleY = s.value("scaleY", 2).toDouble();
-    medianRadius = s.value("medianRadius", 1).toInt();
-    rotationAngle = s.value("rotationAngle", 90.0).toFloat();
-    bilateralRadius = s.value("bilateral radius", 1).toInt();
-    rShift = s.value("rShift", 1).toInt();
-    gShift = s.value("gShift", 1).toInt();
-    bShift = s.value("bShift", 1).toInt();
-    nonLinearMap = s.value("nonLinearMap", false).toBool();
-    gamma = s.value("gamma", 0.1).toFloat();
-
-    imagePath = s.value("imagePath", "").toString();
+    // Load settings for Filter
+    filterType            = s.value(Filter::FILTER_TYPE, FILTER_EDGE_DETECT).toInt();
+    edgeDetectSensitivity = s.value(Filter::EDGE_DETECT_SENSITIVITY, 0.5f).toDouble();
+    blurRadius            = s.value(Filter::BLUR_RADIUS, 10).toInt();
+    scaleX                = s.value(Filter::SCALE_X, 2).toDouble();
+    scaleY                = s.value(Filter::SCALE_Y, 2).toDouble();
+    medianRadius          = s.value(Filter::MEDIAN_RADIUS, 1).toInt();
+    rotationAngle         = s.value(Filter::ROTATION_ANGLE, 90.0).toFloat();
+    bilateralRadius       = s.value(Filter::BILATERAL_RADIUS, 1).toInt();
+    rShift                = s.value(Filter::R_SHIFT, 1).toInt();
+    gShift                = s.value(Filter::G_SHIFT, 1).toInt();
+    bShift                = s.value(Filter::B_SHIFT, 1).toInt();
+    nonLinearMap          = s.value(Filter::NON_LINEAR_MAP, false).toBool();
+    gamma                 = s.value(Filter::GAMMA, 0.1).toFloat();
+    imagePath             = s.value(Filter::IMAGE_PATH, "").toString();
 }
 
 /**
@@ -55,30 +89,33 @@ void Settings::loadSettingsOrDefaults() {
  * in for next session.
  */
 void Settings::saveSettings() {
+    using namespace QSettingsKeys;
+
     QSettings s("CS123", "CS123");
 
-    s.setValue("brushType", brushType);
-    s.setValue("brushRadius", brushRadius);
-    s.setValue("brushRed", brushColor.r);
-    s.setValue("brushGreen", brushColor.g);
-    s.setValue("brushBlue", brushColor.b);
-    s.setValue("brushAlpha", brushColor.a);
-    s.setValue("brushDensity", brushDensity);
-    s.setValue("fixAlphaBlending", fixAlphaBlending);
+    // Save settings for Brush
+    s.setValue(Brush::BRUSH_TYPE, brushType);
+    s.setValue(Brush::BRUSH_RADIUS, brushRadius);
+    s.setValue(Brush::BRUSH_RED, brushColor.r);
+    s.setValue(Brush::BRUSH_GREEN, brushColor.g);
+    s.setValue(Brush::BRUSH_BLUE, brushColor.b);
+    s.setValue(Brush::BRUSH_ALPHA, brushColor.a);
+    s.setValue(Brush::BRUSH_DENSITY, brushDensity);
+    s.setValue(Brush::FIX_ALPHA_BLENDING, fixAlphaBlending);
 
-    s.setValue("filterType", filterType);
-    s.setValue("edgeDetectSensitivity", edgeDetectSensitivity);
-    s.setValue("blurRadius", blurRadius);
-    s.setValue("scaleX", scaleX);
-    s.setValue("scaleY", scaleY);
-    s.setValue("medianRadius", medianRadius);
-    s.setValue("rotationAngle", rotationAngle);
-    s.setValue("bilateralRadius", bilateralRadius);
-    s.setValue("rShift", rShift);
-    s.setValue("gShift", gShift);
-    s.setValue("bShift", bShift);
-    s.setValue("nonLinearMap", nonLinearMap);
-    s.setValue("gamma", gamma);
-
-    s.setValue("imagePath", imagePath);
+    // Save settings for Filter
+    s.setValue(Filter::FILTER_TYPE, filterType);
+    s.setValue(Filter::EDGE_DETECT_SENSITIVITY, edgeDetectSensitivity);
+    s.setValue(Filter::BLUR_RADIUS, blurRadius);
+    s.setValue(Filter::SCALE_X, scaleX);
+    s.setValue(Filter::SCALE_Y, scaleY);
+    s.setValue(Filter::MEDIAN_RADIUS, medianRadius);
+    s.setValue(Filter::ROTATION_ANGLE, rotationAngle);
+    s.setValue(Filter::BILATERAL_RADIUS, bilateralRadius);
+    s.setValue(Filter::R_SHIFT, rShift);
+    s.setValue(Filter::G_SHIFT, gShift);
+    s.setValue(Filter::B_SHIFT, bShift);
+    s.setValue(Filter::NON_LINEAR_MAP, nonLinearMap);
+    s.setValue(Filter::GAMMA, gamma);
+    s.setValue(Filter::IMAGE_PATH, imagePath);
 }
