@@ -9,8 +9,6 @@ For each of the rows below, follow the instructions to record a video. Please re
 
 Once you've recorded everything, navigate to this file in Github, click edit, and either select or drag-and-drop each of your videos into the correct location. This will upload them to GitHub (but not include them in the repo) and automatically embed them into this Markdown file by providing a link. Make sure to double-check that they all show up properly in the preview.
 
-> Note: you can ignore the `student_outputs` folder in the repo for now. You will be using it in the next project, Filter.
-
 We're **not** looking for your video to **exactly** match the expected output (i.e. draw the exact same shape). Just make sure to follow the instructions and verify that the recording fully demonstrates the functionality of that part of your project.
 
 ### Constant Brush
