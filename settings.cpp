@@ -33,20 +33,6 @@ void Settings::loadSettingsOrDefaults() {
     brushDensity = s.value("brushDensity", 5).toInt();
     fixAlphaBlending = s.value("fixAlphaBlending", false).toBool();
 
-    filterType = s.value("filterType", FILTER_EDGE_DETECT).toInt();
-    edgeDetectSensitivity = s.value("edgeDetectSensitivity", 0.5f).toDouble();
-    blurRadius = s.value("blurRadius", 10).toInt();
-    scaleX = s.value("scaleX", 2).toDouble();
-    scaleY = s.value("scaleY", 2).toDouble();
-    medianRadius = s.value("medianRadius", 1).toInt();
-    rotationAngle = s.value("rotationAngle", 90.0).toFloat();
-    bilateralRadius = s.value("bilateral radius", 1).toInt();
-    rShift = s.value("rShift", 1).toInt();
-    gShift = s.value("gShift", 1).toInt();
-    bShift = s.value("bShift", 1).toInt();
-    nonLinearMap = s.value("nonLinearMap", false).toBool();
-    gamma = s.value("gamma", 0.1).toFloat();
-
     imagePath = s.value("imagePath", "").toString();
 }
 
@@ -65,20 +51,6 @@ void Settings::saveSettings() {
     s.setValue("brushAlpha", brushColor.a);
     s.setValue("brushDensity", brushDensity);
     s.setValue("fixAlphaBlending", fixAlphaBlending);
-
-    s.setValue("filterType", filterType);
-    s.setValue("edgeDetectSensitivity", edgeDetectSensitivity);
-    s.setValue("blurRadius", blurRadius);
-    s.setValue("scaleX", scaleX);
-    s.setValue("scaleY", scaleY);
-    s.setValue("medianRadius", medianRadius);
-    s.setValue("rotationAngle", rotationAngle);
-    s.setValue("bilateralRadius", bilateralRadius);
-    s.setValue("rShift", rShift);
-    s.setValue("gShift", gShift);
-    s.setValue("bShift", bShift);
-    s.setValue("nonLinearMap", nonLinearMap);
-    s.setValue("gamma", gamma);
 
     s.setValue("imagePath", imagePath);
 }

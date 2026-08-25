@@ -1,7 +1,7 @@
 #include "canvas2d.h"
-#include <QPainter>
-#include <QMessageBox>
 #include <QFileDialog>
+#include <QMessageBox>
+#include <QPainter>
 #include <iostream>
 #include "settings.h"
 
@@ -27,25 +27,29 @@ void Canvas2D::clearCanvas() {
 /**
  * @brief Stores the image specified from the input file in this class's
  * `std::vector<RGBA> m_image`.
- * Also saves the image width and height to canvas width and height respectively.
+ * Also saves the image width and height to canvas width and height
+ * respectively.
  * @param file: file path to an image
  * @return True if successfully loads image, False otherwise.
  */
-bool Canvas2D::loadImageFromFile(const QString &file) {
+bool Canvas2D::loadImageFromFile(const QString& file) {
     QImage myImage;
     if (!myImage.load(file)) {
-        std::cout<<"Failed to load in image"<<std::endl;
+        std::cout << "Failed to load in image" << std::endl;
         return false;
     }
     myImage = myImage.convertToFormat(QImage::Format_RGBX8888);
     m_width = myImage.width();
     m_height = myImage.height();
-    QByteArray arr = QByteArray::fromRawData((const char*) myImage.bits(), myImage.sizeInBytes());
+    QByteArray arr = QByteArray::fromRawData((const char*)myImage.bits(),
+                                             myImage.sizeInBytes());
 
     m_data.clear();
     m_data.reserve(m_width * m_height);
-    for (int i = 0; i < arr.size() / 4; i++){
-        m_data.push_back(RGBA{(std::uint8_t) arr[4*i], (std::uint8_t) arr[4*i+1], (std::uint8_t) arr[4*i+2], (std::uint8_t) arr[4*i+3]});
+    for (int i = 0; i < arr.size() / 4; i++) {
+        m_data.push_back(
+            RGBA{(std::uint8_t)arr[4 * i], (std::uint8_t)arr[4 * i + 1],
+                 (std::uint8_t)arr[4 * i + 2], (std::uint8_t)arr[4 * i + 3]});
     }
     displayImage();
     return true;
@@ -56,25 +60,28 @@ bool Canvas2D::loadImageFromFile(const QString &file) {
  * @param file: file path to save image to
  * @return True if successfully saves image, False otherwise.
  */
-bool Canvas2D::saveImageToFile(const QString &file) {
+bool Canvas2D::saveImageToFile(const QString& file) {
     QImage myImage = QImage(m_width, m_height, QImage::Format_RGBX8888);
-    for (int i = 0; i < m_data.size(); i++){
-        myImage.setPixelColor(i % m_width, i / m_width, QColor(m_data[i].r, m_data[i].g, m_data[i].b, m_data[i].a));
+    for (int i = 0; i < m_data.size(); i++) {
+        myImage.setPixelColor(
+            i % m_width, i / m_width,
+            QColor(m_data[i].r, m_data[i].g, m_data[i].b, m_data[i].a));
     }
     if (!myImage.save(file)) {
-        std::cout<<"Failed to save image"<<std::endl;
+        std::cout << "Failed to save image" << std::endl;
         return false;
     }
     return true;
 }
 
-
 /**
  * @brief Get Canvas2D's image data and display this to the GUI
  */
 void Canvas2D::displayImage() {
-    QByteArray img(reinterpret_cast<const char *>(m_data.data()), 4 * m_data.size());
-    QImage now = QImage((const uchar*)img.data(), m_width, m_height, QImage::Format_RGBX8888);
+    QByteArray img(reinterpret_cast<const char*>(m_data.data()),
+                   4 * m_data.size());
+    QImage now = QImage((const uchar*)img.data(), m_width, m_height,
+                        QImage::Format_RGBX8888);
     setPixmap(QPixmap::fromImage(now));
     setFixedSize(m_width, m_height);
     update();
@@ -93,13 +100,6 @@ void Canvas2D::resize(int w, int h) {
 }
 
 /**
- * @brief Called when the filter button is pressed in the UI
- */
-void Canvas2D::filterImage() {
-    // Filter TODO: apply the currently selected filter to the loaded image
-}
-
-/**
  * @brief Called when any of the parameters in the UI are modified.
  */
 void Canvas2D::settingsChanged() {
@@ -110,7 +110,8 @@ void Canvas2D::settingsChanged() {
 }
 
 /**
- * @brief These functions are called when the mouse is clicked and dragged on the canvas
+ * @brief These functions are called when the mouse is clicked and dragged on
+ * the canvas
  */
 void Canvas2D::mouseDown(int x, int y) {
     // Brush TODO

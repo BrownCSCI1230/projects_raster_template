@@ -1,127 +1,96 @@
 #include "mainwindow.h"
 #include "settings.h"
 
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QFileDialog>
-#include <QLabel>
-#include <QGroupBox>
-#include <QTabWidget>
-#include <QScrollArea>
 #include <QCheckBox>
+#include <QFileDialog>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QScrollArea>
+#include <QTabWidget>
+#include <QVBoxLayout>
 #include <iostream>
 
-MainWindow::MainWindow()
-{
-    setWindowTitle("2D Projects: Brush and Filter");
+MainWindow::MainWindow() {
+    setWindowTitle("2D Projects: Brush");
 
     // loads in settings from last run or uses default values
     settings.loadSettingsOrDefaults();
 
-    QHBoxLayout *hLayout = new QHBoxLayout(); // horizontal layout for canvas and controls panel
-    QVBoxLayout *vLayout = new QVBoxLayout(); // vertical layout for control panel
+    QHBoxLayout* hLayout =
+        new QHBoxLayout();  // horizontal layout for canvas and controls panel
 
-    vLayout->setAlignment(Qt::AlignTop);
+    // layout for all the controls
+    QVBoxLayout* controlsLayout = new QVBoxLayout();
+    controlsLayout->setAlignment(Qt::AlignTop);
 
-    hLayout->addLayout(vLayout);
+    // make the controls panel scrollable
+    QWidget* controlsWidget = new QWidget();
+    controlsWidget->setLayout(controlsLayout);
+    QScrollArea* controlsScroll = new QScrollArea();
+    controlsScroll->setWidget(controlsWidget);
+    controlsScroll->setWidgetResizable(true);
+
+    // add the controls panel to the h layout
+    hLayout->addWidget(controlsScroll);
     setLayout(hLayout);
 
     setupCanvas2D();
     resize(800, 600);
 
     // makes the canvas into a scroll area
-    QScrollArea *scrollArea = new QScrollArea();
+    QScrollArea* scrollArea = new QScrollArea();
     scrollArea->setWidget(m_canvas);
     scrollArea->setWidgetResizable(true);
     hLayout->addWidget(scrollArea, 1);
 
-    // groupings by project
-    QWidget *brushGroup = new QWidget();
-    QVBoxLayout *brushLayout = new QVBoxLayout();
-    brushLayout->setAlignment(Qt::AlignTop);
-    brushGroup->setLayout(brushLayout);
-
-    QWidget *filterGroup = new QWidget();
-    QVBoxLayout *filterLayout = new QVBoxLayout();
-    filterLayout->setAlignment(Qt::AlignTop);
-    filterGroup->setLayout(filterLayout);
-
-    QScrollArea *controlsScroll = new QScrollArea();
-    QTabWidget *tabs = new QTabWidget();
-    controlsScroll->setWidget(tabs);
-    controlsScroll->setWidgetResizable(true);
-
-    tabs->addTab(brushGroup, "Brush");
-    tabs->addTab(filterGroup, "Filter");
-
-    vLayout->addWidget(controlsScroll);
-
     // brush selection
-    addHeading(brushLayout, "Brush");
-    addRadioButton(brushLayout, "Constant", settings.brushType == BRUSH_CONSTANT, [this]{ setBrushType(BRUSH_CONSTANT); });
-    addRadioButton(brushLayout, "Linear", settings.brushType == BRUSH_LINEAR, [this]{ setBrushType(BRUSH_LINEAR); });
-    addRadioButton(brushLayout, "Quadratic", settings.brushType == BRUSH_QUADRATIC, [this]{ setBrushType(BRUSH_QUADRATIC); });
-    addRadioButton(brushLayout, "Smudge", settings.brushType == BRUSH_SMUDGE, [this]{ setBrushType(BRUSH_SMUDGE); });
+    addHeading(controlsLayout, "Brush");
+    addRadioButton(controlsLayout, "Constant",
+                   settings.brushType == BRUSH_CONSTANT,
+                   [this] { setBrushType(BRUSH_CONSTANT); });
+    addRadioButton(controlsLayout, "Linear", settings.brushType == BRUSH_LINEAR,
+                   [this] { setBrushType(BRUSH_LINEAR); });
+    addRadioButton(controlsLayout, "Quadratic",
+                   settings.brushType == BRUSH_QUADRATIC,
+                   [this] { setBrushType(BRUSH_QUADRATIC); });
+    addRadioButton(controlsLayout, "Smudge", settings.brushType == BRUSH_SMUDGE,
+                   [this] { setBrushType(BRUSH_SMUDGE); });
 
     // brush parameters
-    addSpinBox(brushLayout, "red", 0, 255, 1, settings.brushColor.r, [this](int value){ setUIntVal(settings.brushColor.r, value); });
-    addSpinBox(brushLayout, "green", 0, 255, 1, settings.brushColor.g, [this](int value){ setUIntVal(settings.brushColor.g, value); });
-    addSpinBox(brushLayout, "blue", 0, 255, 1, settings.brushColor.b, [this](int value){ setUIntVal(settings.brushColor.b, value); });
-    addSpinBox(brushLayout, "alpha", 0, 255, 1, settings.brushColor.a, [this](int value){ setUIntVal(settings.brushColor.a, value); });
-    addSpinBox(brushLayout, "radius", 0, 100, 1, settings.brushRadius, [this](int value){ setIntVal(settings.brushRadius, value); });
+    addSpinBox(controlsLayout, "red", 0, 255, 1, settings.brushColor.r,
+               [this](int value) { setUIntVal(settings.brushColor.r, value); });
+    addSpinBox(controlsLayout, "green", 0, 255, 1, settings.brushColor.g,
+               [this](int value) { setUIntVal(settings.brushColor.g, value); });
+    addSpinBox(controlsLayout, "blue", 0, 255, 1, settings.brushColor.b,
+               [this](int value) { setUIntVal(settings.brushColor.b, value); });
+    addSpinBox(controlsLayout, "alpha", 0, 255, 1, settings.brushColor.a,
+               [this](int value) { setUIntVal(settings.brushColor.a, value); });
+    addSpinBox(controlsLayout, "radius", 0, 100, 1, settings.brushRadius,
+               [this](int value) { setIntVal(settings.brushRadius, value); });
 
     // extra credit brushes
-    addHeading(brushLayout, "Extra Credit Brushes");
-    addRadioButton(brushLayout, "Spray", settings.brushType == BRUSH_SPRAY, [this]{ setBrushType(BRUSH_SPRAY); });
-    addSpinBox(brushLayout, "density", 0, 100, 1, settings.brushDensity, [this](int value){ setIntVal(settings.brushDensity, value); });
-    addRadioButton(brushLayout, "Speed", settings.brushType == BRUSH_SPEED, [this]{ setBrushType(BRUSH_SPEED); });
-    addRadioButton(brushLayout, "Fill", settings.brushType == BRUSH_FILL, [this]{ setBrushType(BRUSH_FILL); });
-    addRadioButton(brushLayout, "Custom", settings.brushType == BRUSH_CUSTOM, [this]{ setBrushType(BRUSH_CUSTOM); });
-    addCheckBox(brushLayout, "Fix alpha blending", settings.fixAlphaBlending, [this](bool value){ setBoolVal(settings.fixAlphaBlending, value); });
+    addHeading(controlsLayout, "Extra Credit Brushes");
+    addRadioButton(controlsLayout, "Spray", settings.brushType == BRUSH_SPRAY,
+                   [this] { setBrushType(BRUSH_SPRAY); });
+    addSpinBox(controlsLayout, "density", 0, 100, 1, settings.brushDensity,
+               [this](int value) { setIntVal(settings.brushDensity, value); });
+    addRadioButton(controlsLayout, "Speed", settings.brushType == BRUSH_SPEED,
+                   [this] { setBrushType(BRUSH_SPEED); });
+    addRadioButton(controlsLayout, "Fill", settings.brushType == BRUSH_FILL,
+                   [this] { setBrushType(BRUSH_FILL); });
+    addRadioButton(controlsLayout, "Custom", settings.brushType == BRUSH_CUSTOM,
+                   [this] { setBrushType(BRUSH_CUSTOM); });
+    addCheckBox(
+        controlsLayout, "Fix alpha blending", settings.fixAlphaBlending,
+        [this](bool value) { setBoolVal(settings.fixAlphaBlending, value); });
 
     // clearing canvas
-    addPushButton(brushLayout, "Clear canvas", &MainWindow::onClearButtonClick);
+    addPushButton(controlsLayout, "Clear canvas",
+                  &MainWindow::onClearButtonClick);
 
     // save canvas as image
-    addPushButton(brushLayout, "Save Image", &MainWindow::onSaveButtonClick);
-
-    // filters
-    addHeading(filterLayout, "Filter");
-    addRadioButton(filterLayout, "Edge detect", settings.filterType == FILTER_EDGE_DETECT,  [this]{ setFilterType(FILTER_EDGE_DETECT); });
-    addDoubleSpinBox(filterLayout, "sensitivity", 0.01, 1, 0.01, settings.edgeDetectSensitivity, 2, [this](float value){ setFloatVal(settings.edgeDetectSensitivity, value); });
-
-    addRadioButton(filterLayout, "Blur", settings.filterType == FILTER_BLUR, [this]{ setFilterType(FILTER_BLUR); });
-    addSpinBox(filterLayout, "radius", 0, 100, 1, settings.blurRadius, [this](int value){ setIntVal(settings.blurRadius, value); });
-
-    addRadioButton(filterLayout, "Scale", settings.filterType == FILTER_SCALE, [this]{ setFilterType(FILTER_SCALE); });
-    addDoubleSpinBox(filterLayout, "x", 0.1, 10, 0.1, settings.scaleX, 2, [this](float value){ setFloatVal(settings.scaleX, value); });
-    addDoubleSpinBox(filterLayout, "y", 0.1, 10, 0.1, settings.scaleY, 2, [this](float value){ setFloatVal(settings.scaleY, value); });
-
-    // extra credit filters
-    addHeading(filterLayout, "Extra Credit Filters");
-    addRadioButton(filterLayout, "Median", settings.filterType == FILTER_MEDIAN,  [this]{ setFilterType(FILTER_MEDIAN); });
-    addSpinBox(filterLayout, "radius", 1, 100, 1, settings.medianRadius, [this](int value){ setIntVal(settings.medianRadius, value); });
-
-    addRadioButton(filterLayout, "Chromatic aberration", settings.filterType == FILTER_CHROMATIC,  [this]{ setFilterType(FILTER_CHROMATIC); });
-    addSpinBox(filterLayout, "red shift", -100, 100, 0, settings.rShift, [this](int value){ setIntVal(settings.rShift, value); });
-    addSpinBox(filterLayout, "green shift", -100, 100, 0, settings.gShift, [this](int value){ setIntVal(settings.gShift, value); });
-    addSpinBox(filterLayout, "blue shift", -100, 100, 0, settings.bShift, [this](int value){ setIntVal(settings.bShift, value); });
-
-    addRadioButton(filterLayout, "Tone mapping", settings.filterType == FILTER_MAPPING,  [this]{ setFilterType(FILTER_MAPPING); });
-    addCheckBox(filterLayout, "Non linear function", settings.nonLinearMap, [this](bool value){ setBoolVal(settings.nonLinearMap, value); });
-    addDoubleSpinBox(filterLayout, "gamma", 0.1, 2, 0.1, settings.gamma, 2, [this](float value){ setFloatVal(settings.gamma, value); });
-
-    addRadioButton(filterLayout, "Rotation", settings.filterType == FILTER_ROTATION,  [this]{ setFilterType(FILTER_ROTATION); });
-    addDoubleSpinBox(filterLayout, "angle", -360, 360, 0.1, settings.rotationAngle, 2, [this](float value){ setFloatVal(settings.rotationAngle, value); });
-
-    addRadioButton(filterLayout, "Bilteral smooth", settings.filterType == FILTER_BILATERAL,  [this]{ setFilterType(FILTER_BILATERAL); });
-    addSpinBox(filterLayout, "radius", 1, 100, 1, settings.bilateralRadius, [this](int value){ setIntVal(settings.bilateralRadius, value); });
-
-    // filter push buttons
-    addPushButton(filterLayout, "Load Image", &MainWindow::onUploadButtonClick);
-    addPushButton(filterLayout, "Apply Filter", &MainWindow::onFilterButtonClick);
-    addPushButton(filterLayout, "Revert Image", &MainWindow::onRevertButtonClick);
-    addPushButton(filterLayout, "Save Image", &MainWindow::onSaveButtonClick);
+    addPushButton(controlsLayout, "Save Image", &MainWindow::onSaveButtonClick);
 }
 
 /**
@@ -136,73 +105,93 @@ void MainWindow::setupCanvas2D() {
     }
 }
 
-
 // ------ FUNCTIONS FOR ADDING UI COMPONENTS ------
 
-void MainWindow::addHeading(QBoxLayout *layout, QString text) {
+void MainWindow::addHeading(QBoxLayout* layout, QString text) {
     QFont font;
     font.setPointSize(16);
     font.setBold(true);
 
-    QLabel *label = new QLabel(text);
+    QLabel* label = new QLabel(text);
     label->setFont(font);
     layout->addWidget(label);
 }
 
-void MainWindow::addLabel(QBoxLayout *layout, QString text) {
+void MainWindow::addLabel(QBoxLayout* layout, QString text) {
     layout->addWidget(new QLabel(text));
 }
 
-void MainWindow::addRadioButton(QBoxLayout *layout, QString text, bool value, auto function) {
-    QRadioButton *button = new QRadioButton(text);
+void MainWindow::addRadioButton(QBoxLayout* layout,
+                                QString text,
+                                bool value,
+                                auto function) {
+    QRadioButton* button = new QRadioButton(text);
     button->setChecked(value);
     layout->addWidget(button);
     connect(button, &QRadioButton::clicked, this, function);
 }
 
-void MainWindow::addSpinBox(QBoxLayout *layout, QString text, int min, int max, int step, int val, auto function) {
-    QSpinBox *box = new QSpinBox();
+void MainWindow::addSpinBox(QBoxLayout* layout,
+                            QString text,
+                            int min,
+                            int max,
+                            int step,
+                            int val,
+                            auto function) {
+    QSpinBox* box = new QSpinBox();
     box->setMinimum(min);
     box->setMaximum(max);
     box->setSingleStep(step);
     box->setValue(val);
-    QHBoxLayout *subLayout = new QHBoxLayout();
+    QHBoxLayout* subLayout = new QHBoxLayout();
     addLabel(subLayout, text);
     subLayout->addWidget(box);
     layout->addLayout(subLayout);
-    connect(box, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+    connect(box, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
             this, function);
 }
 
-void MainWindow::addDoubleSpinBox(QBoxLayout *layout, QString text, double min, double max, double step, double val, int decimal, auto function) {
-    QDoubleSpinBox *box = new QDoubleSpinBox();
+void MainWindow::addDoubleSpinBox(QBoxLayout* layout,
+                                  QString text,
+                                  double min,
+                                  double max,
+                                  double step,
+                                  double val,
+                                  int decimal,
+                                  auto function) {
+    QDoubleSpinBox* box = new QDoubleSpinBox();
     box->setMinimum(min);
     box->setMaximum(max);
     box->setSingleStep(step);
     box->setValue(val);
     box->setDecimals(decimal);
-    QHBoxLayout *subLayout = new QHBoxLayout();
+    QHBoxLayout* subLayout = new QHBoxLayout();
     addLabel(subLayout, text);
     subLayout->addWidget(box);
     layout->addLayout(subLayout);
-    connect(box, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+    connect(box,
+            static_cast<void (QDoubleSpinBox::*)(double)>(
+                &QDoubleSpinBox::valueChanged),
             this, function);
 }
 
-void MainWindow::addPushButton(QBoxLayout *layout, QString text, auto function) {
-    QPushButton *button = new QPushButton(text);
+void MainWindow::addPushButton(QBoxLayout* layout,
+                               QString text,
+                               auto function) {
+    QPushButton* button = new QPushButton(text);
     layout->addWidget(button);
     connect(button, &QPushButton::clicked, this, function);
 }
 
-void MainWindow::addCheckBox(QBoxLayout *layout, QString text, bool val, auto function) {
-    QCheckBox *box = new QCheckBox(text);
+void MainWindow::addCheckBox(QBoxLayout* layout,
+                             QString text,
+                             bool val,
+                             auto function) {
+    QCheckBox* box = new QCheckBox(text);
     box->setChecked(val);
     layout->addWidget(box);
     connect(box, &QCheckBox::clicked, this, function);
 }
-
-
 
 // ------ FUNCTIONS FOR UPDATING SETTINGS ------
 
@@ -211,41 +200,32 @@ void MainWindow::setBrushType(int type) {
     m_canvas->settingsChanged();
 }
 
-void MainWindow::setFilterType(int type) {
-    settings.filterType = type;
-    m_canvas->settingsChanged();
-}
-
-void MainWindow::setUIntVal(std::uint8_t &setValue, int newValue) {
+void MainWindow::setUIntVal(std::uint8_t& setValue, int newValue) {
     setValue = newValue;
     m_canvas->settingsChanged();
 }
 
-void MainWindow::setIntVal(int &setValue, int newValue) {
+void MainWindow::setIntVal(int& setValue, int newValue) {
     setValue = newValue;
     m_canvas->settingsChanged();
 }
 
-void MainWindow::setFloatVal(float &setValue, float newValue) {
+void MainWindow::setFloatVal(float& setValue, float newValue) {
     setValue = newValue;
     m_canvas->settingsChanged();
 }
 
-void MainWindow::setBoolVal(bool &setValue, bool newValue) {
+void MainWindow::setBoolVal(bool& setValue, bool newValue) {
     setValue = newValue;
     m_canvas->settingsChanged();
 }
-
 
 // ------ PUSH BUTTON FUNCTIONS ------
 
 void MainWindow::onClearButtonClick() {
-    m_canvas->resize(m_canvas->parentWidget()->size().width(), m_canvas->parentWidget()->size().height());
+    m_canvas->resize(m_canvas->parentWidget()->size().width(),
+                     m_canvas->parentWidget()->size().height());
     m_canvas->clearCanvas();
-}
-
-void MainWindow::onFilterButtonClick() {
-    m_canvas->filterImage();
 }
 
 void MainWindow::onRevertButtonClick() {
@@ -254,8 +234,12 @@ void MainWindow::onRevertButtonClick() {
 
 void MainWindow::onUploadButtonClick() {
     // Get new image path selected by user
-    QString file = QFileDialog::getOpenFileName(this, tr("Open Image"), QDir::homePath(), tr("Image Files (*.png *.jpg *.jpeg)"));
-    if (file.isEmpty()) { return; }
+    QString file =
+        QFileDialog::getOpenFileName(this, tr("Open Image"), QDir::homePath(),
+                                     tr("Image Files (*.png *.jpg *.jpeg)"));
+    if (file.isEmpty()) {
+        return;
+    }
     settings.imagePath = file;
 
     // Display new image
@@ -266,8 +250,12 @@ void MainWindow::onUploadButtonClick() {
 
 void MainWindow::onSaveButtonClick() {
     // Get new image path selected by user
-    QString file = QFileDialog::getSaveFileName(this, tr("Save Image"), QDir::currentPath(), tr("Image Files (*.png *.jpg *.jpeg)"));
-    if (file.isEmpty()) { return; }
+    QString file = QFileDialog::getSaveFileName(
+        this, tr("Save Image"), QDir::currentPath(),
+        tr("Image Files (*.png *.jpg *.jpeg)"));
+    if (file.isEmpty()) {
+        return;
+    }
 
     // Save image
     m_canvas->saveImageToFile(file);
